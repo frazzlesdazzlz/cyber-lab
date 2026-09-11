@@ -1,0 +1,52 @@
+Incident Report - Suspicious Login Investigation
+
+Incident Report - Suspicious Login Investigation
+
+Yesterday thru 10th sept 26 we had 12 Failed authentication attempts in 90 secs starting at 10.42am with the user j.harris from work station FINANCE-07.
+
+I checked his base line 
+Average failed logins per day: 1–2 Highest previous burst: 3 attempts so significantly higher this is suspicious, and also discovered that his IP dresses were different.
+Usual source IP range:  10.20.4.x
+Today's source IP:      185.220.101.34
+Next we investigated the IP and discovered its exit traffic came from Tor.
+From the logs we discovered failed attempts but at 10.43.51 there was a success
+A this point I concluded A possible threat actor has successfully authenticated to the account.
+I checked he company's identity system.
+The login had the correct password and the MFA was approved as well.
+At this stage I Contact j.harris through a trusted channel.
+He responded negative, he had not logged in today.
+At this point I can say with high confidence that the account has been compromised by a threat actor.
+Next move was containment we Disabled to prevent new authentications and revoked j.harris's active sessions.
+The treat actor tried three different user accounts before he succeeded, using the same IP.
+After investigating logs I discovered a suspicious email with a link sent from IT support from an illegitimate domain.
+
+So to sum up
+The employee received a phishing email containing a link to a fake company login page. He entered his username and current password, exposing his credentials to the threat actor. The threat actor then used those credentials to attempt authentication to the legitimate company system. This generated MFA requests on j.harris's phone. After repeated requests, j.harris approved one, allowing the threat actor to successfully authenticate to his account.
+
+
+Impact
+
+
+The treat actor got access to the following 
+
+10:43:51  LOGIN SUCCESS       j.harris
+10:44:08  EMAIL OPENED        Inbox
+10:44:37  EMAIL SEARCH        "invoice"
+10:45:12  EMAIL SEARCH        "bank"
+10:45:46  EMAIL OPENED        "Supplier payment details"
+10:47:03  SHAREPOINT ACCESS   Finance/Suppliers
+10:48:21  FILE OPENED         supplier-payments.xlsx
+10:49:14  FILE DOWNLOADED     supplier-payments.xlsx
+10:51:02  MAIL RULE CREATED   "Invoices"
+10:51:19  MAIL RULE ACTION    Forward matching messages externally
+
+The following are of high concern
+
+10:51:02  MAIL RULE CREATED   "Invoices"
+10:51:19  MAIL RULE ACTION    Forward matching messages externally
+
+I removed the malicious forwarding rule and review the mailbox configuration for anything else the attacker changed.
+
+Final thought 
+
+“The compromised account downloaded supplier-payments.xlsx, creating a high likelihood of data exfiltration. Further investigation is required to determine the extent of data exposure.”
